@@ -1,0 +1,23 @@
+export NEMATUS=/home/shuoyangd/nmt/nematus
+export SUBWORD=/home/shuoyangd/nmt/subword-nmt
+export MOSES=/export/b11/shuoyangd/mosesstd
+
+export WORKDIR=/export/b12/shuoyangd/winter-school/exp
+
+export SRC_LANG=zhch
+export TGT_LANG=pnyn
+export TGT_FULL_LANG=Pinyin
+export VOCAB_SIZE=3500
+export BPE_OPT=3000
+
+export TRN_PREFIX=lexicon
+export DEV_PREFIX=lexicon.dev
+export TST_PREFIX=lexicon.tst
+
+export TRNDATA=$WORKDIR/data/lexicon
+export DEVDATA=$WORKDIR/data/lexicon.dev
+export TSTDATA=$WORKDIR/data/lexicon.tst
+export VLD_SCRPT="$WORKDIR/validate.sh --config $BASH_SOURCE"
+export QSUB_PREFIX="qsub -l 'arch=*64,gpu=1,hostname=b*' -o $WORKDIR/outs -e $WORKDIR/outs"
+export WRAP_TEMPLATE=$WORKDIR/data/eval08.zh.sgm
+

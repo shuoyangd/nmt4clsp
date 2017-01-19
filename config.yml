@@ -1,0 +1,27 @@
+# Paths are relative to config file location
+relative-paths: yes
+
+# performance settings
+beam-size: 12
+devices: [0]
+normalize: yes
+gpu-threads: 0
+cpu-threads: 1
+
+# bpe
+bpe: model/zhchpnyn.bpe
+debpe: true
+
+# scorer configuration
+scorers:
+  F0:
+    path: model/model.npz
+    type: Nematus
+
+# scorer weights
+weights:
+  F0: 1.0
+
+# vocabularies
+source-vocab: data/lexicon.bpe.zhch.json
+target-vocab: data/lexicon.bpe.pnyn.json
