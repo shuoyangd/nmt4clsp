@@ -1,24 +1,43 @@
+# directories to dependencies
 export NEMATUS=/home/shuoyangd/nmt/nematus
 export SUBWORD=/home/shuoyangd/nmt/subword-nmt
 export MOSES=/export/b11/shuoyangd/mosesstd
 
+# working directory, where the data and model will be stored
 export WORKDIR=/export/b12/shuoyangd/winter-school/exp
 
+# source and target language suffix
 export SRC_LANG=zhch
 export TGT_LANG=pnyn
+
+# full target language name as shown in sgm file for evaluation
 export TGT_FULL_LANG=Pinyin
+
+# BPE stuff
 export VOCAB_SIZE=3500
 export BPE_OPT=3000
 
+# data filename, with language suffix stripped 
+# for example, the source and target file for this configuration
+# should be named as `lexicon.zhch` and `lexicon.pnyn`
 export TRN_PREFIX=lexicon
 export DEV_PREFIX=lexicon.dev
 export TST_PREFIX=lexicon.tst
 
+# full data directory, with language suffix stripped as well
 export TRNDATA=$WORKDIR/data/lexicon
 export DEVDATA=$WORKDIR/data/lexicon.dev
 export TSTDATA=$WORKDIR/data/lexicon.tst
+
+# shell command to call the validation script
 export VLD_SCRPT="$WORKDIR/validate.sh --config $BASH_SOURCE"
+
+# qsub prefix
 export QSUB_PREFIX="qsub -l 'arch=*64,gpu=1,hostname=b*' -o $WORKDIR/outs -e $WORKDIR/outs"
+
+# template used to wrap up the raw test output into sgm
+# so BLEU evaluation script could be easily applied
 export WRAP_TEMPLATE=$WORKDIR/data/eval08.zh.sgm
 
-source /home/shuoyangd/pyenv/theano/bin/activate # activate this line if you use virtualenv, otherwise, comment this out
+# activate this line if you use virtualenv, otherwise, comment this out
+source /home/shuoyangd/pyenv/theano/bin/activate
