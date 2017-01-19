@@ -152,7 +152,7 @@ make -j
 
 Your final build should reside in `/path/to/clone/build/bin/amun`.
 
-#### Decode with AMU-NMT
+### Decode with AMU-NMT
 
 Check out the working directory you set up in `.nematusrc` for a `$WORKDIR/model/model.npz` file. This is where Nematus will write the latest model during training. If you don't see it yet, you need to wait longer for the training to proceed.
 
@@ -168,7 +168,7 @@ echo "cd /path/to/repo && cat data/lexicon.tst.zhch | ~/nmt/amunmt/build/bin/amu
 
 > I should run tokenize, bpe and everything before doing this. This does not matter much for this task, but sometime soon I need to integrate AMU-NMT into `test.sh`.
 
-#### Decode with Nematus
+### Decode with Nematus
 
 As long as you have set up `.nematusrc`, you can use `test.sh` to decode with Nematus as well. Just run `./test.sh --config /path/to/.nematusrc`
 
