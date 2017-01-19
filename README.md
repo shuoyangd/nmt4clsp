@@ -20,5 +20,5 @@ DEPENDENCIES
 INSTRUCTIONS
 ------------
 
-See Tutorial
+See [Tutorial](https://github.com/shuoyangd/nmt4clsp/blob/master/TUTORIAL.md).
 

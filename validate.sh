@@ -37,7 +37,6 @@ done
 
 source $CONFIG
 cd $WORKDIR
-source /home/shuoyangd/pyenv/theano/bin/activate
 
 # path to nematus ( https://www.github.com/rsennrich/nematus )
 nematus=$NEMATUS

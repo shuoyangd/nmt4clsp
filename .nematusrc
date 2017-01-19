@@ -21,3 +21,4 @@ export VLD_SCRPT="$WORKDIR/validate.sh --config $BASH_SOURCE"
 export QSUB_PREFIX="qsub -l 'arch=*64,gpu=1,hostname=b*' -o $WORKDIR/outs -e $WORKDIR/outs"
 export WRAP_TEMPLATE=$WORKDIR/data/eval08.zh.sgm
 
+source /home/shuoyangd/pyenv/theano/bin/activate # activate this line if you use virtualenv, otherwise, comment this out

@@ -23,7 +23,7 @@ if __name__ == '__main__':
                     lrate=0.0001,
                     optimizer='adadelta',
                     maxlen=10, # XXX: make sure you change this for real task
-                    # maxlen=10,
+                    # maxlen=50,
                     batch_size=80,
                     valid_batch_size=80,
                     datasets=[DATA_DIR + "/" + os.environ['TRN_PREFIX'] +'.bpe.' + SRC, DATA_DIR + "/" + os.environ['TRN_PREFIX'] + '.bpe.' + TGT],

@@ -50,6 +50,8 @@ Checkout this repository as well. `cd` into the directory you checked out this r
 
 `.nematusrc` supposedly contains all of the files and software you need to run Nematus. Follow the comments in that file and change them to your directories.
 
+`config.py` contains some hyperparameters (e.g. `batch_size` `maxlen`) which you may want to check before running experiments. Specially for the transliteration task, because all the training data are lexicon, you may want to increase `maxlen` for real translation task.
+
 ### Preprocessing
 
 Run `./preprocess.sh --config /path/to/.nematusrc` and it will take care of everything for you. You don't need GPU for this.

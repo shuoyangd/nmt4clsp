@@ -37,7 +37,6 @@ done
 
 source $CONFIG
 cd $WORKDIR
-source /home/shuoyangd/pyenv/theano/bin/activate
 
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 export PATH=/opt/NVIDIA/cuda-7/bin:/opt/NVIDIA/cuda-7.0/bin:$PATH
