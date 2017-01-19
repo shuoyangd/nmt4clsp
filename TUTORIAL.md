@@ -40,6 +40,17 @@ pip install --user numpy numexpr cython tables ipdb
 python setup.py install
 ```
 
+You may experience the following problem during installing tables:
+
+> ERROR:: Could not find a local HDF5 installation
+
+The most straight-forward solution is to install HDF5 by yourself. Alternatively you can also use my installation if you like:
+
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/shuoyangd/local/hdf5/lib"
+export HDF5_DIR="/home/shuoyangd/local/hdf5"
+```
+
 ### Checking out Scripts
 
 Checkout [subword-nmt](https://github.com/rsennrich/subword-nmt) and [mosesdecoder](https://github.com/moses-smt/mosesdecoder). You don't need to compile any of them because we are just using scripts.
@@ -121,7 +132,7 @@ Adding prefix directory to boostrap script will enable you to compile on the gri
 
 #### Compile AMU-NMT
 
-Because `cuda` library only exists on those machines that have a GPU, you first need to qlogin to a machine with gpu, e.g. `qlogin -l hostname=b\*`.
+Because `cuda` library only exists on those machines that have a GPU, you first need to qlogin to a machine with gpu, e.g. `qlogin -l hostname=b*`.
 
 Make sure you already configured cuda-related environment variables properly. Mine looks like this:
 
