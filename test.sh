@@ -9,6 +9,7 @@ print_usage () {
 
 USAGE:
 -c|--config    path to the env.sh config file
+-d|--decoder   choose decoder for testing
 ";
 }
 
@@ -57,7 +58,7 @@ echo $device
 # apply tokenization
 for prefix in $TST_PREFIX
 do
-  if [ $SRC == "zh" ] || [ $SRC == "chn"]  || [ $SRC == "cn" ]; then
+  if [ $SRC == "zh" ] || [ $SRC == "chn" ]  || [ $SRC == "cn" ]; then
     cat data/$prefix.$SRC_LANG | \
         ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
         $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \

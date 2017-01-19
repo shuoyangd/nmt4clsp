@@ -77,7 +77,7 @@ stanford_seg=/home/shuoyangd/stanford-seg
 for prefix in $TRN_PREFIX $DEV_PREFIX
 do
   # segmentation for chinese
-  if [ $SRC == "zh" ] || [ $SRC == "chn"] || [ $SRC == "cn" ] ; then
+  if [ $SRC == "zh" ] || [ $SRC == "chn" ] || [ $SRC == "cn" ] ; then
     cat data/$prefix.$SRC | \
         ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
         $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \
@@ -89,7 +89,7 @@ do
   fi
 
 
-  if [ $TRG == "zh" ] || [ $TRG == "chn"]  || [ $TRG == "cn" ] ; then
+  if [ $TRG == "zh" ] || [ $TRG == "chn" ]  || [ $TRG == "cn" ] ; then
     cat data/$prefix.$TRG | \
         ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
         $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \
