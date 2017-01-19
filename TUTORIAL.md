@@ -40,11 +40,11 @@ pip install --user numpy numexpr cython tables ipdb
 python setup.py install
 ```
 
-You may experience the following problem during installing tables:
+You may experience the following problem when installing tables:
 
 > ERROR:: Could not find a local HDF5 installation
 
-The most straight-forward solution is to install HDF5 by yourself. Alternatively you can also use my installation if you like:
+The most straight-forward solution is to install HDF5 by yourself. Alternatively you can also use my installation by adding the following lines to `.bash_profile`:
 
 ```
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/shuoyangd/local/hdf5/lib"
