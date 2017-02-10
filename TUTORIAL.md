@@ -144,15 +144,7 @@ export CUDA_TOOLKIT_ROOT_DIR=$CUDA_HOME
 
 You can setup CuMeM and/or CuDNN for better performance and smaller memory usage. But it's optional.
 
-Checkout [this](https://github.com/emjotde/amunmt) repo. However, as [this](https://github.com/emjotde/amunmt/issues/22) discussion indicates, the latest version has some known issue with gcc 4.9. Hence, we need to roll back to something earlier, such as `3a548b3aa09f6d17db5383575fd24090688a610f`. You can do this by:
-
-```
-git clone https://github.com/emjotde/amunmt /path/to/clone
-cd /path/to/clone
-git checkout 3a548b3aa09f6d17db5383575fd24090688a610f
-```
-
-After that, compile as documented:
+Checkout [this](https://github.com/emjotde/amunmt) repo. After that, compile as documented:
 
 ```
 mkdir build
