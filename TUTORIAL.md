@@ -106,7 +106,7 @@ I will use exact tested dependency version as specified on AMU-NMT github page. 
 
 #### boost
 
-First of all, you need boost library verion 1.55. It takes a while to set up your own. If you want to use mine, add the following lines to your `.bash_profile`: 
+First of all, you need boost library verion 1.63. It takes a while to set up your own. If you want to use mine, add the following lines to your `.bash_profile`: 
 
 ```
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/shuoyangd/local/lib"
@@ -114,7 +114,7 @@ export LIBRARY_PATH=$LIBRARY_PATH:"/home/shuoyangd/local/lib"
 export BOOST_ROOT="/home/shuoyangd/local/pkg/boost_1_55_0"
 ```
 
-The default boost library on CLSP seems to be version 1.55 as well, but I'm not sure about the library path.
+The default boost on CLSP seems to be version 1.55 and does not work for me.
 
 #### cmake
 
