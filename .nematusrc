@@ -2,6 +2,7 @@
 export NEMATUS=/home/shuoyangd/nmt/nematus
 export SUBWORD=/home/shuoyangd/nmt/subword-nmt
 export MOSES=/export/b11/shuoyangd/mosesstd
+# export AMUNMT=/home/shuoyangd/nmt/amunmt/ # optional, for fast validation/test
 
 if [ ":$PATH:" != *":/opt/NVDIA/cuda-8:"* ]; then
   export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
@@ -35,6 +36,7 @@ export DEVDATA=$WORKDIR/data/lexicon.dev
 export TSTDATA=$WORKDIR/data/lexicon.tst
 
 # shell command to call the validation script
+export VLD_DECODER="amunmt" # nematus | amunmt
 export VLD_SCRPT="$WORKDIR/validate.sh --config $BASH_SOURCE"
 
 # qsub prefix
@@ -46,3 +48,13 @@ export WRAP_TEMPLATE=$WORKDIR/data/eval08.zh.sgm
 
 # activate this line if you use virtualenv, otherwise, comment this out
 source /home/shuoyangd/pyenv/theano/bin/activate
+
+# optional: amunmt configurations
+export RELATIVE_PATHS="yes"
+export BEAM_SIZE="12"
+export NORMALIZE="yes"
+export GPU_THREADS="1"
+export CPU_THREADS="0"
+export BPE="" # since we have done bpe in nematus, no need to go through a second pass
+export DEBPE="true"
+
