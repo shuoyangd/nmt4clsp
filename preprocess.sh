@@ -2,12 +2,14 @@
 
 # default
 CONFIG=""
+BPE_ONLY=""
 
 print_usage () {
 	printf "train.sh: train a nmt model with nematus
 
 USAGE:
 -c|--config    path to the env.sh config file
+--bpe-only     only run bpe (no arg)
 ";
 }
 
@@ -26,6 +28,10 @@ case $key in
 	CONFIG="$2"
 	shift # past argument
 	;;
+        --bpe-only)
+        BPE_ONLY="yes"
+        # no argument
+        ;;
 	*)
 	# unknown options
 	print_usage
@@ -74,56 +80,69 @@ stanford_seg=/home/shuoyangd/stanford-seg
 
 
 # tokenize
-for prefix in $TRN_PREFIX $DEV_PREFIX
-do
-  # segmentation for chinese
-  if [ $SRC == "zh" ] || [ $SRC == "chn" ] || [ $SRC == "cn" ] ; then
-    cat data/$prefix.$SRC | \
-        ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
-        $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \
-        ./chinese-punctuations-utf8.perl > data/$prefix.tok.$SRC
-  else
-    cat data/$prefix.$SRC | \
-        $mosesdecoder/scripts/tokenizer/normalize-punctuation.perl -l $SRC | \
-        $mosesdecoder/scripts/tokenizer/tokenizer.perl -a -l $SRC > data/$prefix.tok.$SRC
-  fi
+if [ -z $BPE_ONLY ] ; then 
+  for prefix in $TRN_PREFIX $DEV_PREFIX
+  do
+    # segmentation for chinese
+    if [ $SRC == "zh" ] || [ $SRC == "chn" ] || [ $SRC == "cn" ] ; then
+      cat data/$prefix.$SRC | \
+          ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
+          $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \
+          ./chinese-punctuations-utf8.perl > data/$prefix.tok.$SRC
+    else
+      cat data/$prefix.$SRC | \
+          $mosesdecoder/scripts/tokenizer/normalize-punctuation.perl -l $SRC | \
+          $mosesdecoder/scripts/tokenizer/tokenizer.perl -a -l $SRC > data/$prefix.tok.$SRC
+    fi
+  
+  
+    if [ $TRG == "zh" ] || [ $TRG == "chn" ]  || [ $TRG == "cn" ] ; then
+      cat data/$prefix.$TRG | \
+          ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
+          $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \
+          ./chinese-punctuations-utf8.perl > data/$prefix.tok.$TRG
+    else 
+      cat data/$prefix.$TRG | \
+          $mosesdecoder/scripts/tokenizer/normalize-punctuation.perl -l $TRG | \
+          $mosesdecoder/scripts/tokenizer/tokenizer.perl -a -l $TRG > data/$prefix.tok.$TRG
+    fi
+  done
+  
+  # clean empty and long sentences, and sentences with high source-target ratio (training corpus only)
+  $mosesdecoder/scripts/training/clean-corpus-n.perl $TRNDATA.tok $SRC $TRG $TRNDATA.tok.clean 1 80
+  
+  # train truecaser
+  $mosesdecoder/scripts/recaser/train-truecaser.perl -corpus $TRNDATA.tok.clean.$SRC -model model/truecase-model.$SRC
+  $mosesdecoder/scripts/recaser/train-truecaser.perl -corpus $TRNDATA.tok.clean.$TRG -model model/truecase-model.$TRG
+  
+  # apply truecaser (cleaned training corpus)
+  for prefix in $TRN_PREFIX
+   do
+    $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$SRC < data/$prefix.tok.clean.$SRC > data/$prefix.tc.$SRC
+    $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$TRG < data/$prefix.tok.clean.$TRG > data/$prefix.tc.$TRG
+   done
 
+  # apply truecaser (dev/test files)
+  for prefix in $DEV_PREFIX
+   do
+    $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$SRC < data/$prefix.tok.$SRC > data/$prefix.tc.$SRC
+    $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$TRG < data/$prefix.tok.$TRG > data/$prefix.tc.$TRG
+   done
+else
+  for prefix in $TRN_PREFIX $DEV_PREFIX
+  do
+    if [ ! -f data/$prefix.tc.$SRC ]; then
+      cp data/$prefix.$SRC data/$prefix.tc.$SRC
+    fi
 
-  if [ $TRG == "zh" ] || [ $TRG == "chn" ]  || [ $TRG == "cn" ] ; then
-    cat data/$prefix.$TRG | \
-        ./segmentstd.sh $stanford_seg/segment.sh data/ ctb UTF-8 0 | \
-        $mosesdecoder/scripts/tokenizer/escape-special-chars.perl | \
-        ./chinese-punctuations-utf8.perl > data/$prefix.tok.$TRG
-  else 
-    cat data/$prefix.$TRG | \
-        $mosesdecoder/scripts/tokenizer/normalize-punctuation.perl -l $TRG | \
-        $mosesdecoder/scripts/tokenizer/tokenizer.perl -a -l $TRG > data/$prefix.tok.$TRG
-  fi
-done
-
-# clean empty and long sentences, and sentences with high source-target ratio (training corpus only)
-$mosesdecoder/scripts/training/clean-corpus-n.perl $TRNDATA.tok $SRC $TRG $TRNDATA.tok.clean 1 80
-
-# train truecaser
-$mosesdecoder/scripts/recaser/train-truecaser.perl -corpus $TRNDATA.tok.clean.$SRC -model model/truecase-model.$SRC
-$mosesdecoder/scripts/recaser/train-truecaser.perl -corpus $TRNDATA.tok.clean.$TRG -model model/truecase-model.$TRG
-
-# apply truecaser (cleaned training corpus)
-for prefix in $TRN_PREFIX
- do
-  $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$SRC < data/$prefix.tok.clean.$SRC > data/$prefix.tc.$SRC
-  $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$TRG < data/$prefix.tok.clean.$TRG > data/$prefix.tc.$TRG
- done
-
-# apply truecaser (dev/test files)
-for prefix in $DEV_PREFIX
- do
-  $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$SRC < data/$prefix.tok.$SRC > data/$prefix.tc.$SRC
-  $mosesdecoder/scripts/recaser/truecase.perl -model model/truecase-model.$TRG < data/$prefix.tok.$TRG > data/$prefix.tc.$TRG
- done
+    if [ ! -f data/$prefix.tc.$TRG ]; then
+      cp data/$prefix.$TRG data/$prefix.tc.$TRG
+    fi
+  done
+fi
 
 # train BPE
-cat $TRNDATA.tc.$SRC $TRNDATA.tc.$TRG | $subword_nmt/learn_bpe.py -s $bpe_operations > model/$SRC$TRG.bpe
+cat data/$TRN_PREFIX.tc.$SRC data/$TRN_PREFIX.tc.$TRG | $subword_nmt/learn_bpe.py -s $bpe_operations > model/$SRC$TRG.bpe
 
 # apply BPE
 
