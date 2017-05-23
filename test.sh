@@ -12,6 +12,7 @@ USAGE:
 }
 
 MULTIREF=false
+SCORER="multi-bleu"
 
 # Use > 1 to consume two arguments per pass in the loop (e.g. each
 # argument has a corresponding value to go with it).
