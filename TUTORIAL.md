@@ -34,7 +34,7 @@ To leave this virtual environment, simply type `deactivate`. But don't do it now
 
 ### Setting up Theano
 
-As of 05/31/2017, the best practice seems to use the latest theano release, but as later release come out, this may no longer apply. To get the latest theano release:
+As of 05/31/2017, the best practice seems to use the latest theano release, but as later release comes out, this may no longer apply. To get the latest theano release:
 
 ```
 pip install theano
@@ -44,7 +44,7 @@ pip install theano
 
 Please use this copy: [https://github.com/shuoyangd/nematus](https://github.com/shuoyangd/nematus) -- it contains a tiny tweak with `Popen` that enables the validation script to be submitted normally. DO NOT use upstream on CLSP grid at least for now.
 
-First, let's make sure we have the latest `ipython`, as we would be using `ipdb` and some older version of `ipython` has some problems with that:
+First, let's make sure we have the latest `ipython`, as we would be using `ipdb` and older versions of `ipython` has some problems with that:
 
 ```
 pip install ipython --upgrade
@@ -54,6 +54,11 @@ Then install a bunch of dependencies:
 
 ```
 pip install numpy numexpr cython tables ipdb
+```
+
+After all the dependencies are set, it's time to configure Nematus. Go to the directory you cloned the Nematus repository and run:
+
+```
 python setup.py install
 ```
 
