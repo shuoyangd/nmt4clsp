@@ -9,34 +9,51 @@ The data and configurations in this repository allows you to build a Chinese tra
 INSTRUCTIONS
 ------------
 
+### Setting up Virtualenv
+
+For your best, this repository assumes usage of [virtualenv](https://virtualenv.pypa.io/en/stable/). The basic idea for virtualenv is to create a standalone python environment so (1) you don't run the risk of mess up your root python environment and (2) you no longer need root privilege on the grid. If you do not use it, start by getting it with:
+
+```
+pip install virtualenv
+```
+
+And then, set up a virtual environment wherever you want, and activate it:
+
+```
+virtualenv /path/to/wherever
+source /path/to/wherever/bin/activate
+```
+
+Sometimes this gives you an out-dated version of `pip`. Make sure you get the latest version:
+
+```
+pip install --upgrade pip
+```
+
+To leave this virtual environment, simply type `deactivate`. But don't do it now, as we are going to install a series of packages in this environment. Whenever you need to access these packages, you need to enter this environment again.
+
 ### Setting up Theano
 
-I still strongly advocate for the use of [virtualenv](https://virtualenv.pypa.io/en/stable/) on the grid. If you want to use it, check out the document to setup this beforehand.
-
-You should already installed theano in the last Thursday's session, maybe on your own laptop. For Nematus, I experienced less problem by installing the bleeding edge version instead of the latest *release*. That is, you should have run
+As of 05/31/2017, the best practice seems to use the latest theano release, but as later release come out, this may no longer apply. To get the latest theano release:
 
 ```
-pip install --user <--no-deps> git+https://github.com/Theano/Theano.git#egg=Theano
+pip install theano
 ```
-
-instead of 
-
-```
-pip install --user theano
-```
-
-But I did that long time ago, so YMMV.
-
-Don't forget to enable `--user` on the grid. 
 
 ### Setting up Nematus
 
 Please use this copy: [https://github.com/shuoyangd/nematus](https://github.com/shuoyangd/nematus) -- it contains a tiny tweak with `Popen` that enables the validation script to be submitted normally. DO NOT use upstream on CLSP grid at least for now.
 
-Setup should be easy:
+First, let's make sure we have the latest `ipython`, as we would be using `ipdb` and some older version of `ipython` has some problems with that:
 
 ```
-pip install --user numpy numexpr cython tables ipdb
+pip install ipython --upgrade
+```
+
+Then install a bunch of dependencies:
+
+```
+pip install numpy numexpr cython tables ipdb
 python setup.py install
 ```
 
