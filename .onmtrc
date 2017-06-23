@@ -1,0 +1,61 @@
+# directories to dependencies
+export ONMT=/home/shuoyangd/nmt/opennmt
+export SUBWORD=/home/shuoyangd/nmt/subword-nmt
+export MOSES=/export/b11/shuoyangd/mosesstd
+# export AMUNMT=/home/shuoyangd/nmt/amunmt/ # optional, for fast validation/test
+
+if [ ":$PATH:" != *":/opt/NVDIA/cuda-8:"* ]; then
+  export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+  export PATH=/opt/NVIDIA/cuda-8/bin:$PATH
+fi
+
+# working directory, where the data and model will be stored
+export WORKDIR=/home/shuoyangd/experiments/onmt-chn-en/exp0
+
+# source and target language suffix
+export SRC_LANG=zh
+export TGT_LANG=en
+
+# full target language name as shown in sgm file for evaluation
+export TGT_FULL_LANG=English
+# BPE stuff
+export VOCAB_SIZE=50000
+export BPE_OPT=49500
+
+# data filename, with language suffix stripped 
+# for example, the source and target file for this configuration
+# should be named as `lexicon.zhch` and `lexicon.pnyn`
+export TRN_PREFIX=corpus
+export DEV_PREFIX=eval05
+export TST_PREFIX=eval08
+
+# full data directory, with language suffix stripped as well
+export TRNDATA=$WORKDIR/data/corpus
+export DEVDATA=$WORKDIR/data/eval05
+export TSTDATA=$WORKDIR/data/eval08
+
+# activate this line if you use virtualenv, otherwise, comment this out
+source /home/shuoyangd/pyenv/py3/bin/activate
+
+# TRAINING CONFIGURATIONS
+# all default is consistent with nematus
+export TRAIN_TRAIN_FROM="" # if there is a previous model to start with
+export TRAIN_TRAIN_FROM_STATE_DICT="" # if there is a previous dict to start with
+export TRAIN_START_EPOCH="" # if trained for certain amount of epochs previously
+
+export TRAIN_LAYERS="2"
+export TRAIN_RNN_SIZE="1024"
+export TRAIN_WORD_VEC_SIZE="500"
+export TRAIN_BRNN="true"
+export TRAIN_BATCH_SIZE="80"
+export TRAIN_EPOCHS="50000" # i.e. infinite
+export TRAIN_OPTIM="adadelta"
+export TRAIN_DROPOUT="0.2" # implementation may not be consistent with nematus
+export TRAIN_LEARNING_RATE="1.0"
+export TRAIN_PRE_WORD_VECS_ENC=""
+export TRAIN_PRE_WORD_VECS_DEC=""
+
+# optional: if you are using nist-bleu, you need to specify template used
+# to wrap up the raw test output into sgm
+export WRAP_TEMPLATE=$WORKDIR/data/eval08.zh.sgm
+

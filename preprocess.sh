@@ -5,10 +5,10 @@ CONFIG=""
 BPE_ONLY=""
 
 print_usage () {
-	printf "train.sh: train a nmt model with nematus
+	printf "preprocess.sh: preprocess data for opennmt training
 
 USAGE:
--c|--config    path to the env.sh config file
+-c|--config    path to the .onmtrc config file
 --bpe-only     only run bpe (no arg)
 ";
 }
@@ -73,7 +73,7 @@ mosesdecoder=$MOSES
 subword_nmt=$SUBWORD
 
 # path to nematus ( https://www.github.com/rsennrich/nematus )
-nematus=$NEMATUS
+onmt=$ONMT
 
 # path to stanford-seg
 stanford_seg=/home/shuoyangd/stanford-seg
@@ -145,12 +145,14 @@ fi
 cat data/$TRN_PREFIX.tc.$SRC data/$TRN_PREFIX.tc.$TRG | $subword_nmt/learn_bpe.py -s $bpe_operations > model/$SRC$TRG.bpe
 
 # apply BPE
-
 for prefix in $TRN_PREFIX $DEV_PREFIX
  do
   $subword_nmt/apply_bpe.py -c model/$SRC$TRG.bpe < data/$prefix.tc.$SRC > data/$prefix.bpe.$SRC
   $subword_nmt/apply_bpe.py -c model/$SRC$TRG.bpe < data/$prefix.tc.$TRG > data/$prefix.bpe.$TRG
- done
+  sed -i "$ d" data/$prefix.bpe.$SRC;
+  sed -i "$ d" data/$prefix.bpe.$TRG;
+done
 
-# build network dictionary
-$nematus/data/build_dictionary.py $TRNDATA.bpe.$SRC $TRNDATA.bpe.$TRG
+# build binary training format
+python $ONMT/preprocess.py -train_src data/$TRN_PREFIX.bpe.$SRC -train_tgt data/$TRN_PREFIX.bpe.$TRG -valid_src data/$DEV_PREFIX.bpe.$SRC -valid_tgt data/$DEV_PREFIX.bpe.$TRG -save_data data/$TRN_PREFIX+$DEV_PREFIX.bin
+

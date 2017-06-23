@@ -40,7 +40,40 @@ cd $WORKDIR
 
 # theano device
 export n_gpus=`lspci | grep -i "nvidia" | wc -l`
-export device=gpu`nvidia-smi | sed -e '1,/Processes/d' | tail -n+3 | head -n-1 | perl -ne 'next unless /^\|\s+(\d)\s+\d+/; $a{$1}++; for(my $i=0;$i<$ENV{"n_gpus"};$i++) { if (!defined($a{$i})) { print $i."\n"; last; }}' | tail -n 1`
-echo $device
-THEANO_FLAGS=mode=FAST_RUN,floatX=float32,device=$device,on_unused_input=warn python config.py
+export device=`nvidia-smi | sed -e '1,/Processes/d' | tail -n+3 | head -n-1 | perl -ne 'next unless /^\|\s+(\d)\s+\d+/; $a{$1}++; for(my $i=0;$i<$ENV{"n_gpus"};$i++) { if (!defined($a{$i})) { print $i."\n"; last; }}' | tail -n 1`
+echo gpu$device
+if [ -z $device ] ; then
+  echo "no device! grid cheaaaaaaaaaatin!"
+  exit;
+fi
+
+cmd="python $ONMT/train.py -data data/$TRN_PREFIX+$DEV_PREFIX.bin.train.pt -save_model model/model -gpus $device"
+
+if [ ! -z $TRAIN_TRAIN_FROM ] ; then
+  cmd=$cmd" -train_from $TRAIN_FROM"
+fi
+
+if [ ! -z $TRAIN_TRAIN_FROM_STATE_DICT ] ; then
+  cmd=$cmd" -train_from $TRAIN_FROM_STATE_DICT"
+fi
+
+if [ ! -z $TRAIN_START_EPOCH ] ; then
+  cmd=$cmd" -start_epoch $START_EPOCH"
+fi
+
+if [ ! -z $TRAIN_PRE_WORD_VECS_ENC ] ; then
+  cmd=$cmd" -pre_word_vecs_enc $TRAIN_PRE_WORD_VECS_ENC"
+fi
+
+if [ ! -z $TRAIN_PRE_WORD_VECS_DEC ] ; then
+  cmd=$cmd" -pre_word_vecs_dec $TRAIN_PRE_WORD_VECS_DEC"
+fi
+
+if [ ! -z $TRAIN_BRNN ] ; then
+  cmd=$cmd" -brnn" 
+fi
+
+cmd=$cmd" -layers $TRAIN_LAYERS -rnn_size $TRAIN_RNN_SIZE -word_vec_size $TRAIN_WORD_VEC_SIZE -batch_size $TRAIN_BATCH_SIZE -epochs $TRAIN_EPOCHS -optim $TRAIN_OPTIM -dropout $TRAIN_DROPOUT -learning_rate $TRAIN_LEARNING_RATE"
+echo $cmd
+$cmd
 

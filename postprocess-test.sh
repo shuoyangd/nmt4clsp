@@ -5,5 +5,5 @@ lng=en
 
 sed -r 's/\@\@ //g' | \
 # sed -r 's/ \@(\S*?)\@ /\1/g' | \
-./detruecase.perl | \
-./detokenizer.perl -l $lng
+./detruecase.perl 
+# ./detokenizer.perl -l $lng

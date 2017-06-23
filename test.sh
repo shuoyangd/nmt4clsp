@@ -1,13 +1,13 @@
 #!/bin/bash
 
 print_usage () {
-	printf "test.sh: test a nmt model with nematus
+	printf "test.sh: test a nmt model with opennmt
 
 USAGE:
 -c|--config    path to the env.sh config file
--d|--decoder   choose decoder for testing
 -s|--scorer    choose a scorer for evaluation [nist|multi-bleu]
 --multi-ref    test set has multiple reference on the target side (default = false)
+--model        the model to be tested
 ";
 }
 
@@ -29,16 +29,16 @@ case $key in
 	CONFIG="$2"
 	shift # past argument
 	;;
-        -d|--decoder)
-        DECODER="$2"
-        shift
-        ;;
         -s|--scorer)
         SCORER="$2"
         shift
         ;;
         --multi-ref)
         MULTIREF=true
+        shift
+        ;;
+        --model)
+        MODEL="$2"
         shift
         ;;
 	*)
@@ -92,8 +92,7 @@ do
   $SUBWORD/apply_bpe.py -c model/$SRC_LANG$TGT_LANG.bpe < data/$prefix.tc.$SRC_LANG > data/$prefix.bpe.$SRC_LANG
 done
 
-model=$WORKDIR/model/model.ensemble.npz
-cp $WORKDIR/model/model.npz.json ${model}.json
+model=$MODEL
 tst=$TSTDATA.bpe.$SRC_LANG
 ref=$TSTDATA.$TGT_LANG
 
@@ -120,54 +119,14 @@ if [ $SCORER == "multi-bleu" ] ; then
     else
       $MOSES/scripts/ems/support/run-command-on-multiple-refsets.perl 'cat mref-input-file | \
           $MOSES/scripts/tokenizer/normalize-punctuation.perl -l $TGT_LANG | \
-          $MOSES/scripts/tokenizer/tokenizer.perl -a -l $TGT_LANG' data/${TST_PREFIX}.${TGT_LANG}.txt \
+          $MOSES/scripts/tokenizer/tokenizer.perl -a -l $TGT_LANG > mref-output-file' data/${TST_PREFIX}.${TGT_LANG}.txt \
           data/${TST_PREFIX}.${TGT_LANG}.tok
     fi
   fi
 fi
 
 # decode
-if [ $DECODER == "nematus" ] ; then
-  THEANO_FLAGS=mode=FAST_RUN,floatX=float32,device=gpu$device,on_unused_input=warn python $nematus/nematus/translate.py \
-     -m $model \
-     -i $tst \
-     -o $tst.output \
-     -k 12 -n -p 1
-elif [ $DECODER == "amunmt" ] ; then
-  rand=`od -vAn -N4 -tu4 < /dev/urandom | sed 's/ //g'`
-  amu_config=config.$rand.yml
-
-  touch $amu_config 
-  echo """relative-paths: $RELATIVE_PATHS
-
-beam-size: $BEAM_SIZE
-devices: [$device]
-normalize: $NORMALIZE
-gpu-threads: 0
-cpu-threads: 1
-
-scorers: 
-  F0: 
-    path: $model
-    type: Nematus
-    
-weights:
-  F0: 1.0
-
-source-vocab: data/$TRN_PREFIX.bpe.$SRC_LANG.json
-target-vocab: data/$TRN_PREFIX.bpe.$TGT_LANG.json""" > $amu_config
-
-  if [ ! -z $BPE ] ; then
-    echo "bpe: $BPE" >> $amu_config
-  fi
-  echo "debpe: $DEBPE" >> $amu_config
-
-  $AMUNMT/build/bin/amun -c $amu_config < $tst > $tst.output
-  rm $amu_config
-else
-  echo "decoder not suppported" >&2
-  exit 1
-fi
+python $ONMT/translate.py -gpu $device -model $MODEL -src $tst -tgt $ref -replace_unk -verbose -output $tst.output
 
 cat $tst.output | ./postprocess-test.sh > $tst.output.postprocessed
 
